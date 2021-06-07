@@ -60,9 +60,13 @@ void DepositService::post(HTTPRequest *request, HTTPResponse *response) {
     string value = "Basic " + Base64::bytesToBase64((const unsigned char *) m_db->stripe_secret_key.c_str(),
 						  m_db->stripe_secret_key.size());
     client.set_header("Authorization",value);
-    HTTPClientResponse *client_response = client.post("/v1/charges",
-                                                  encoded_body);
-    // This method converts the HTTP body into a rapidjson document
+    HTTPClientResponse *client_response = client.post("/v1/charges", encoded_body);
+
+    // judge the error code from stripe server
+    if (client_response->status() >= 400) {
+        return response->setStatus(client_response->status());
+    }
+    // convert the HTTP body into a rapidjson document
     Document *d = client_response->jsonBody();
     if ((*d)["status"] == "succeeded") {
         // add deposit
@@ -104,7 +108,7 @@ void DepositService::post(HTTPRequest *request, HTTPResponse *response) {
         document.Accept(writer);
         response->setBody(buffer.GetString() + string("\n"));
     } else {
-        response->setStatus(400);
+        response->setStatus(client_response->status());
     }
     delete d;
     return;
