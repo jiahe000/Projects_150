@@ -2,6 +2,7 @@
 
 #include "HttpUtils.h"
 
+#include <cstdio>
 using namespace std;
 
 map<string, string> HttpUtils::params(string query) {
