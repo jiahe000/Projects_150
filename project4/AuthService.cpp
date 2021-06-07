@@ -27,7 +27,7 @@ AuthService::AuthService() : HttpService("/auth-tokens") {
 }
 
 void AuthService::post(HTTPRequest *request, HTTPResponse *response) {
-    // 1. get argument from http
+    // get argument from http
     WwwFormEncodedDict auth_dict = request->formEncodedBody();
     string username = auth_dict.get("username");
     string password = auth_dict.get("password");
@@ -50,15 +50,15 @@ void AuthService::post(HTTPRequest *request, HTTPResponse *response) {
     bool exist_user = false;
     auto user_pair =  m_db->users.find(username);
     if (user_pair != m_db->users.end()) {
-        // 2. user account is exist, then login
-        // 2.1 verificate the correctionof password
+        // user account is exist, then login
+        // verificate the correctionof password
         string true_password = user_pair->second->password;
         if (password != true_password) {
-            // 2.2 password is not correct
+            // password is not correct
             response->setStatus(403);
             return;
         } else {
-            // 2.3 password is correct,then crate auth token for login
+            // password is correct,then crate auth token for login
             StringUtils string_util = StringUtils();
             auth_token_id = string_util.createAuthToken();
             m_db->auth_tokens.insert({auth_token_id, user_pair->second});
@@ -67,7 +67,7 @@ void AuthService::post(HTTPRequest *request, HTTPResponse *response) {
         }
 
     } else {
-        // 3. user account is not exist, create it and login
+        // user account does not exist, create it and login
         StringUtils string_util = StringUtils();
         user_id = string_util.createUserId();
         auth_token_id = string_util.createAuthToken();
@@ -81,7 +81,7 @@ void AuthService::post(HTTPRequest *request, HTTPResponse *response) {
         m_db->users.insert({username, user});
         m_db->auth_tokens.insert({auth_token_id, user});
     }
-    // 4. build response
+    // build response
     Document document;
     Document::AllocatorType& a = document.GetAllocator();
     Value o;
@@ -113,21 +113,28 @@ void AuthService::del(HTTPRequest *request, HTTPResponse *response) {
                 throw ClientError::badRequest();
             }
             // validate the permission
+            auto pair_auth = m_db->auth_tokens.find(split_string[1]);
             if (pair->first != split_string[1]) {
-                throw ClientError::forbidden();
+                // cannot delete other user's auth_token
+                if (pair_auth != m_db->auth_tokens.end()) {
+                    if (pair_auth->second != pair->second) {
+                        throw ClientError::forbidden();
+                    }
+                } else {
+                    throw ClientError::notFound();
+                }
             }
-            m_db->auth_tokens.erase(pair);
+            m_db->auth_tokens.erase(pair_auth);
             
             // build response
             response->setStatus(200);
             return;
         } else {
-            // the auth_token is error
-            throw ClientError::badRequest();
+            // the auth_token is not exist
+            throw ClientError::notFound();
         }
     } else {
         // request without auth_token
         throw ClientError::unauthorized();
     }
 }
-
