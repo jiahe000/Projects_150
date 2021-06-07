@@ -15,13 +15,14 @@ HttpService::HttpService(string pathPrefix) {
 User *HttpService::getAuthenticatedUser(HTTPRequest *request)  {
   // TODO: implement this function
   if (request->hasAuthToken()) {
-    // request includes auth token
+    // request include auth token
     string auth_token_id = request->getAuthToken();
     auto pair = m_db->auth_tokens.find(auth_token_id);
     if (pair != m_db->auth_tokens.end()) {
       return pair->second;
     }
-  }  return NULL;
+  }
+  return NULL;
 }
 
 string HttpService::pathPrefix() {
@@ -52,4 +53,3 @@ void HttpService::del(HTTPRequest *request, HTTPResponse *response) {
   cout << "DELETE " << request->getPath() << endl;
   throw ClientError::methodNotAllowed();
 }
-
