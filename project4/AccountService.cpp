@@ -26,21 +26,18 @@ AccountService::AccountService() : HttpService("/users") {
 }
 
 /**
- * @description: Fetches the user object for this account. You can only fetch the user object for a the account that you authenticated.
- * @param {HTTPRequest} *request
- * @param {HTTPResponse} *response
- * email string
- * balance int
- * @return {*}
- */
+Fetches the user object for this account. 
+You can only fetch the user object for a the account that you authenticated.
+parameters: {HTTPRequest} *request, {HTTPResponse} *response
+email string, balance int
+**/
 void AccountService::get(HTTPRequest *request, HTTPResponse *response)
 {
     auto user = this->getAuthenticatedUser(request);
     // cout << "get account info" << endl;
 
     // judege authenticated
-    if (user)
-    {
+    if (user) {
         // judege the permission of user
         vector<string> split_user_string = StringUtils::split(request->getUrl(), '/');
         if (split_user_string.size() < 2) {
@@ -81,20 +78,18 @@ void AccountService::get(HTTPRequest *request, HTTPResponse *response)
 }
 
 /**
- * @description: Updates the information for a user.
- * @param {HTTPRequest} *request
- *  email string
- * @param {HTTPResponse} *response
- *  email string
- *  balance int
- * @return {*}
- */
+Updates the information for a user.
+parameter: {HTTPRequest} *request
+email string
+parameter: {HTTPResponse} *response
+email string
+balance int
+**/
 void AccountService::put(HTTPRequest *request, HTTPResponse *response)
 {
     auto user = this->getAuthenticatedUser(request);
     // judege authenticated
-    if (user)
-    {
+    if (user) {
         // judege the permission of user
         vector<string> split_user_string = StringUtils::split(request->getUrl(), '/');
         if (split_user_string.size() < 2) {
@@ -138,12 +133,10 @@ void AccountService::put(HTTPRequest *request, HTTPResponse *response)
         response->setContentType("application/json");
         response->setBody(buffer.GetString() + string("\n"));
     }
-    else
-    {
+    else {
         throw ClientError::unauthorized();
         // cout << "no auth" << endl;
         // response->setStatus(401);
         // return;
     }
 }
-
