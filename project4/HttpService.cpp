@@ -14,7 +14,14 @@ HttpService::HttpService(string pathPrefix) {
 
 User *HttpService::getAuthenticatedUser(HTTPRequest *request)  {
   // TODO: implement this function
-  return NULL;
+  if (request->hasAuthToken()) {
+    // request includes auth token
+    string auth_token_id = request->getAuthToken();
+    auto pair = m_db->auth_tokens.find(auth_token_id);
+    if (pair != m_db->auth_tokens.end()) {
+      return pair->second;
+    }
+  }  return NULL;
 }
 
 string HttpService::pathPrefix() {
