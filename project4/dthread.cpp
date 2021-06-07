@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <cstdlib>
+
 pthread_mutex_t print_lock = PTHREAD_MUTEX_INITIALIZER;
 std::vector<pthread_t> thread_list;
 int logFd = -1;
