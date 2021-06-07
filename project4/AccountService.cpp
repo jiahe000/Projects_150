@@ -21,16 +21,16 @@
 using namespace std;
 using namespace rapidjson;
 
-AccountService::AccountService() : HttpService("/users") {
-  
+AccountService::AccountService() : HttpService("/users")
+{
 }
 
-/**
+/***
 Fetches the user object for this account. 
 You can only fetch the user object for a the account that you authenticated.
 parameters: {HTTPRequest} *request, {HTTPResponse} *response
 email string, balance int
-**/
+***/
 void AccountService::get(HTTPRequest *request, HTTPResponse *response)
 {
     auto user = this->getAuthenticatedUser(request);
@@ -77,14 +77,14 @@ void AccountService::get(HTTPRequest *request, HTTPResponse *response)
     }
 }
 
-/**
+/***
 Updates the information for a user.
 parameter: {HTTPRequest} *request
 email string
 parameter: {HTTPResponse} *response
 email string
 balance int
-**/
+***/
 void AccountService::put(HTTPRequest *request, HTTPResponse *response)
 {
     auto user = this->getAuthenticatedUser(request);
