@@ -1,1 +1,1 @@
-These are the courseworks in the Operating Sytems course from UC Davis. Code was written with cpp.
+These are the courseworks in a Operating Sytems course. Code was written with cpp.
