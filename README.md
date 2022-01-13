@@ -1,1 +1,1 @@
-These are the courseworks of ECS 150 - Operating Sytems from UC Davis. Code was written with cpp.
+These are the courseworks in the Operating Sytems course from UC Davis. Code was written with cpp.
